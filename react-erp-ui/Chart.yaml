@@ -1,0 +1,6 @@
+apiVersion: v2
+name: react-erp-ui
+description: Helm chart for the React ERP UI (static SPA served on port 3000)
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

@@ -1,0 +1,24 @@
+PDL JISA API deployed.
+
+Kong public URL:
+  https://api.paisalo.net/jisa
+  https://api.paisalo.net/jisa/swagger
+
+In-cluster health check:
+  http://{{ include "pdl-jisa-api.fullname" . }}:{{ .Values.service.port }}/health
+
+{{- if .Values.ingress.enabled }}
+{{- range $host := .Values.ingress.hosts }}
+{{- range .paths }}
+Application URL:
+  http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}{{ .path }}
+{{- end }}
+{{- end }}
+{{- else if contains "LoadBalancer" .Values.service.type }}
+Get the external IP:
+  kubectl get svc --namespace {{ .Release.Namespace }} {{ include "pdl-jisa-api.fullname" . }}
+{{- else }}
+Port-forward for local access:
+  kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ include "pdl-jisa-api.fullname" . }} 8080:{{ .Values.service.port }}
+  curl http://127.0.0.1:8080/health
+{{- end }}

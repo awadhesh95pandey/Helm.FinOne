@@ -1,0 +1,147 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/paisalo-digital-limited/pdl-hrmsservices-api
+  pullPolicy: Always
+  digest: "sha256:846ebcd0dac8fe9c3252ccb7b1ac29d9c333e835a579c68b2801c445eff8e4d1"
+  tag: ""
+
+imagePullSecrets:
+  - name: nbfc-ghcr-secret
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 8080
+
+containerPort: 8080
+
+env:
+  ASPNETCORE_ENVIRONMENT: Production
+  ASPNETCORE_URLS: "http://+:8080"
+  # Container clock and DateTime.Now use India Standard Time. JWT exp is still validated in UTC.
+  TZ: "Asia/Kolkata"
+  DB_TimeZone: "Asia/Kolkata"
+  # Override on-prem IP baked into appsettings.json — must be reachable from GKE (via VPN/Interconnect)
+  DB_IP: "192.168.1.55"
+  isliveDb: "true"
+  PodUrl: ""
+  # Public IP 34.131.181.133 times out from GKE. pdlerp_prod is on Cloud SQL instance "nbfc"; use its private IP.
+  Credntials__HostIp: "10.247.161.3"
+  Credntials__Port: "5432"
+  Credntials__dbName: "pdlerp_prod"
+  Credntials__username: "paisalo_developer"
+  Credntials__password: "PaisaloDeveloper2026!"
+  # Flat SFTP keys are copied onto SftpCredentials:Live and :Uat at startup.
+  # isliveDb true selects the Live section.
+  SftpHost: "124.123.16.234"
+  SftpUsername: "Sftp"
+  SftpPassword: "Sft@43^fw"
+  SftpPort: "1024"
+  port: "1024"
+  NetworkPath: "\\\\124.123.16.234\\Data"
+  # Enable Swagger UI behind Kong (https://api.paisalo.net/hrmsservices/swagger)
+  Swagger__Enabled: "true"
+  # Prefix used by Swagger "Try it out" so calls hit Kong: /hrmsservices/api/{controller}/{action}
+  Swagger__ServerPrefix: "/hrmsservices"
+  # Shared PDF generation via the Master API in prod-erp-services.
+  MasterPdfUrl: "http://pdl-master-api.prod-erp-services.svc.cluster.local:8080"
+  # Must match Master env PdfApiKey
+  PdfApiKey: "pdl-internal-pdf-key"
+
+extraEnv: []
+
+# UAT shared SFTP objects live in erp-services and are not required in prod-erp-services.
+# Explicit env above supplies the production SFTP settings.
+envFrom:
+  - configMapRef:
+      name: shared-sftp-config
+      optional: true
+  - secretRef:
+      name: shared-sftp-credentials
+      optional: true
+
+dataProtection:
+  enabled: true
+  mountPath: /root/.aspnet/DataProtection-Keys
+
+ingress:
+  enabled: false
+  className: "gce"
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    # networking.gke.io/managed-certificates: "pdl-hrmsservices-api-cert"
+    # kubernetes.io/ingress.global-static-ip-name: "pdl-hrmsservices-api-ip"
+  hosts:
+    - host: hrms-api.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+httpRoute:
+  enabled: false
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+# Liveness and startup only prove the process is listening.
+# Readiness opens PostgreSQL and runs SELECT 1. Keep this timeout above the 8s connection timeout.
+startupProbe:
+  httpGet:
+    path: /health/live
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 30
+
+livenessProbe:
+  httpGet:
+    path: /health/live
+    port: http
+  initialDelaySeconds: 15
+  periodSeconds: 20
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /health/ready
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 10
+  failureThreshold: 3
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

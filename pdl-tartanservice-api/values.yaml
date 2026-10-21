@@ -1,0 +1,120 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/paisalo-digital-limited/pdl-tartanservice-api
+  pullPolicy: IfNotPresent
+  digest: "sha256:1799461272f2c9fdc9a0e9cd95cbc705522fff794b4d2d5ef395dec80b67c8d0"
+  tag: ""
+
+imagePullSecrets:
+  - name: nbfc-ghcr-secret
+
+nameOverride: ""
+# Must match Kong upstream: pdl-tartanservice-api.erp-services.svc.cluster.local
+fullnameOverride: "pdl-tartanservice-api"
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 8080
+
+containerPort: 8080
+
+env:
+  ASPNETCORE_ENVIRONMENT: Production
+  ASPNETCORE_URLS: "http://+:8080"
+  # Override on-prem IP baked into appsettings.json — must be reachable from GKE (via VPN/Interconnect)
+  DB_IP: "192.168.1.55"
+  isliveDb: "false"
+  # GitHub placeholder used by other_pod health check — override with a real peer URL when available
+  PodUrl: "https://github.com/Paisalo-Digital-Limited"
+  # Enable Swagger UI behind Kong (https://api.paisalo.net/tartan/swagger)
+  Swagger__Enabled: "true"
+  # Prefix used by Swagger "Try it out" so calls hit Kong route /tartan/...
+  Swagger__ServerPrefix: "/tartan"
+
+extraEnv: []
+
+envFrom: []
+  # - secretRef:
+  #     name: pdl-tartanservice-api-secrets
+
+dataProtection:
+  enabled: true
+  mountPath: /root/.aspnet/DataProtection-Keys
+
+ingress:
+  enabled: false
+  className: "gce"
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    # networking.gke.io/managed-certificates: "pdl-tartanservice-api-cert"
+    # kubernetes.io/ingress.global-static-ip-name: "pdl-tartanservice-api-ip"
+  hosts:
+    - host: tartan-api.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+httpRoute:
+  enabled: false
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+# App exposes a single aggregate check at /health
+startupProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  failureThreshold: 30
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 15
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 15
+  periodSeconds: 10
+  timeoutSeconds: 10
+  failureThreshold: 3
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

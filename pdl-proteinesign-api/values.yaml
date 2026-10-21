@@ -1,0 +1,121 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/paisalo-digital-limited/pdl-proteinesign-api
+  pullPolicy: IfNotPresent
+  digest: "sha256:693ad1651829c7839fd63d0c1e6d4d67ee4367284b4dc026fc7a2d51f02c33b2"
+  tag: ""
+
+imagePullSecrets:
+  - name: nbfc-ghcr-secret
+
+nameOverride: ""
+# Must match Kong upstream: pdl-proteinesign-api.erp-services.svc.cluster.local
+fullnameOverride: "pdl-proteinesign-api"
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 8080
+
+containerPort: 8080
+
+env:
+  ASPNETCORE_ENVIRONMENT: Production
+  ASPNETCORE_URLS: "http://+:8080"
+  ASPNETCORE_HTTP_PORTS: ""
+  # Override on-prem IP baked into appsettings.json — must be reachable from GKE (via VPN/Interconnect)
+  DB_IP: "192.168.1.55"
+  encryptSalts__DB_IP: "192.168.1.55"
+  encryptSalts__IsDbLive: "false"
+  isliveDb: "false"
+  # Enable Swagger UI behind Kong (https://api.paisalo.net/proteinesign/swagger)
+  Swagger__Enabled: "true"
+  # Prefix used by Swagger "Try it out" so calls hit Kong route /proteinesign/...
+  Swagger__ServerPrefix: "/proteinesign"
+
+extraEnv: []
+
+envFrom: []
+  # - secretRef:
+  #     name: pdl-proteinesign-api-secrets
+
+dataProtection:
+  enabled: true
+  mountPath: /root/.aspnet/DataProtection-Keys
+
+ingress:
+  enabled: false
+  className: "gce"
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    # networking.gke.io/managed-certificates: "pdl-proteinesign-api-cert"
+    # kubernetes.io/ingress.global-static-ip-name: "pdl-proteinesign-api-ip"
+  hosts:
+    - host: proteinesign-api.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+httpRoute:
+  enabled: false
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+# App exposes a single aggregate check at /health
+startupProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  failureThreshold: 30
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 15
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 15
+  periodSeconds: 10
+  timeoutSeconds: 10
+  failureThreshold: 3
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

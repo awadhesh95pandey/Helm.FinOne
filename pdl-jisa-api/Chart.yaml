@@ -1,0 +1,6 @@
+apiVersion: v2
+name: pdl-jisa-api
+description: Helm chart for PDL JISA API on GKE
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

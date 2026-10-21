@@ -1,0 +1,135 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/paisalo-digital-limited/pdl-mobilecolending-api
+  pullPolicy: IfNotPresent
+  digest: "sha256:9e9774592ff01e420d829577733b4aef68bcfb9b3be6b128af9458bae6070330"
+  tag: ""
+
+imagePullSecrets:
+  - name: nbfc-ghcr-secret
+
+nameOverride: ""
+# Must match Kong upstream: pdl-mobilecolending-api.erp-services.svc.cluster.local
+fullnameOverride: "pdl-mobilecolending-api"
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 8080
+
+containerPort: 8080
+
+env:
+  ASPNETCORE_ENVIRONMENT: Production
+  ASPNETCORE_URLS: "http://+:8080"
+  # Container clock and DateTime.Now use India Standard Time. JWT exp is still validated in UTC.
+  TZ: "Asia/Kolkata"
+  DB_TimeZone: "Asia/Kolkata"
+  # On-prem SQL Server. This is not the PostgreSQL host.
+  DB_IP: "192.168.1.55"
+  isliveDb: "true"
+  # Public IP 34.131.181.133 times out from GKE. pdlerp_prod is on Cloud SQL instance "nbfc"; use its private IP.
+  Credntials__HostIp: "10.247.161.3"
+  Credntials__Port: "5432"
+  Credntials__dbName: "pdlerp_prod"
+  Credntials__username: "paisalo_developer"
+  Credntials__password: "PaisaloDeveloper2026!"
+  # Production SFTP. This API prefers SftpPort, and also reads port.
+  SftpHost: "124.123.16.234"
+  SftpUsername: "Sftp"
+  SftpPassword: "Sft@43^fw"
+  SftpPort: "1024"
+  port: "1024"
+  NetworkPath: "\\\\124.123.16.234\\Data"
+  # Enable Swagger UI behind Kong (https://api.paisalo.net/mobilecolending/swagger/index.html)
+  Swagger__Enabled: "true"
+  # Prefix used by Swagger "Try it out" so calls hit Kong route /mobilecolending/...
+  Swagger__ServerPrefix: "/mobilecolending"
+
+extraEnv: []
+
+envFrom: []
+  # - secretRef:
+  #     name: pdl-mobilecolending-api-secrets
+
+dataProtection:
+  enabled: true
+  mountPath: /root/.aspnet/DataProtection-Keys
+
+ingress:
+  enabled: false
+  className: "gce"
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    # networking.gke.io/managed-certificates: "pdl-mobilecolending-api-cert"
+    # kubernetes.io/ingress.global-static-ip-name: "pdl-mobilecolending-api-ip"
+  hosts:
+    - host: mobilecolending-api.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+httpRoute:
+  enabled: false
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+# Liveness and startup only prove the process is listening.
+# Readiness opens PostgreSQL and runs SELECT 1. Keep this timeout above the 8s connection timeout.
+startupProbe:
+  httpGet:
+    path: /health/live
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  failureThreshold: 30
+
+livenessProbe:
+  httpGet:
+    path: /health/live
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 15
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /health/ready
+    port: http
+  initialDelaySeconds: 15
+  periodSeconds: 10
+  timeoutSeconds: 10
+  failureThreshold: 3
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

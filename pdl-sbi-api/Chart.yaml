@@ -1,0 +1,6 @@
+apiVersion: v2
+name: pdl-sbi-api
+description: Helm chart for PDL SBI API on GKE
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
