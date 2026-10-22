@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/paisalo-digital-limited/pdl-managementservice-api
   pullPolicy: IfNotPresent
-  digest: "sha256:896f776ef7c6ac1ee72bf2c54b227a237308cf8d694daf5b40247f4c8cf16a9f"
+  digest: "sha256:7d216b0b30daa0af34a6e7a1ce2ab37daf37faba03457a2ed3394483a67fb86c"
   tag: ""
 
 imagePullSecrets:
@@ -44,7 +44,9 @@ env:
   # dbName is plain text. Username and Password stay encrypted in appsettings and are decrypted at startup.
   Credntials__HostIp: "10.247.161.3"
   Credntials__Port: "5432"
-  Credntials__dbName: "pdlerp_prod"
+  Credntials__Database: "Ofi/YbuNugeNnQca5s8iQqdEzQRWDRkOlYJd8bGRW14="
+  Credntials__Username: "R5qu4A3ASEU+fuyjw4dO439gdw70gLqvO4YHQUQY83Zh4+SIokum2vzgA6/9u5aG"
+  Credntials__Password: "iFLSV5csNQX+c280yiFRFkh+u/Hkh4PLk/xMQeRhw/u+SJ9GYF3rmukbfyRIDp0r"
   # Production SFTP. This API prefers SftpPort; port is only a fallback.
   SftpHost: "124.123.16.234"
   SftpUsername: "Sftp"
@@ -52,6 +54,8 @@ env:
   SftpPort: "1024"
   port: "1024"
   NetworkPath: "\\\\124.123.16.234\\Data"
+  NewBaseUrl: "https://predemoapi.paisalo.in:2383/Data"
+  NewBaseUrl2: "https://predemoapi.paisalo.in:2383"
   # Enable Swagger UI behind Kong (https://api.paisalo.net/PDLManagement/swagger/index.html)
   Swagger__Enabled: "true"
   # Prefix used by Swagger "Try it out" so calls hit Kong route /PDLManagement/...

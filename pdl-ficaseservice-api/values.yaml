@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/paisalo-digital-limited/pdl-ficaseservice-api
   pullPolicy: IfNotPresent
-  digest: "sha256:c8595b38c8fc3c6967a690a550e12b9255b0a18d0aee765accc4465a1be3e506"
+  digest: "sha256:6bfed8d2aa5fcd54ed1c24c19ee6581d0a75bcf8a733e9aaad44d0b7f0e501f3"
   tag: ""
 
 imagePullSecrets:
@@ -46,8 +46,8 @@ env:
   Credntials__HostIp: "10.247.161.3"
   Credntials__Port: "5432"
   Credntials__dbName: "pdlerp_prod"
-  DB_User: "paisalo_developer"
-  DB_Password: "PaisaloDeveloper2026!"
+  DB_User: "paisalo_production"
+  DB_Password: "PaisaloProduction2026#!"
   # Production SFTP. This API prefers SftpPort, and also reads port.
   SftpHost: "124.123.16.234"
   SftpUsername: "Sftp"
@@ -55,6 +55,8 @@ env:
   SftpPort: "1024"
   port: "1024"
   NetworkPath: "\\\\124.123.16.234\\Data"
+  NewBaseUrl: "https://predemoapi.paisalo.in:2383/Data"
+  NewBaseUrl2: "https://predemoapi.paisalo.in:2383"
   # Enable Swagger UI behind Kong (https://api.paisalo.net/ficaseservice/swagger)
   Swagger__Enabled: "true"
   # Prefix used by Swagger "Try it out" so calls hit Kong: /ficaseservice/api/{controller}/{action}
@@ -65,16 +67,6 @@ env:
   PdfApiKey: "pdl-internal-pdf-key"
 
 extraEnv: []
-
-# UAT shared SFTP objects live in erp-services and are not required in prod-erp-services.
-# Explicit env above supplies the production SFTP settings.
-envFrom:
-  - configMapRef:
-      name: shared-sftp-config
-      optional: true
-  - secretRef:
-      name: shared-sftp-credentials
-      optional: true
 
 dataProtection:
   enabled: true

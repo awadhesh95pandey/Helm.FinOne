@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/paisalo-digital-limited/pdl-quantumapifetch-service
   pullPolicy: IfNotPresent
-  digest: "sha256:20a896c1b954695767fdf403908ab162d63adfad6b8e71002ab59c9b56465003"
+  digest: "sha256:39966dddda5c103f090c3d8a0c095ff51c3bb64a2a7fc559011ee3d5be1e9b92"
   tag: ""
 
 imagePullSecrets:
@@ -43,7 +43,9 @@ env:
   # Public IP 34.131.181.133 times out from GKE. pdlerp_uat is on Cloud SQL instance "nbfc"; use its private IP.
   Credntials__HostIp: "10.247.161.3"
   Credntials__Port: "5432"
-  Credntials__dbName: "pdlerp_uat"
+  Credntials__dbName: "pdlerp_prod"
+  Credntials__username: "paisalo_developer"
+  Credntials__password: "PaisaloDeveloper2026!"
   # Enable Swagger UI behind Kong (https://api.paisalo.net/quantumapifetch/swagger/index.html)
   Swagger__Enabled: "true"
   # Prefix used by Swagger "Try it out" so calls hit Kong route /quantumapifetch/...

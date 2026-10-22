@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/paisalo-digital-limited/pdl-reportservice-api
   pullPolicy: IfNotPresent
-  digest: "sha256:e76a93e758a4dc97b0588be08349315f4c71f7e90c0c7dd1c837b43cf2b35dd9"
+  digest: "sha256:16efdcd0ff4db58e0be9c407866ba750f1e5852ed965bd444eac52dee81f57f7"
   tag: ""
 
 imagePullSecrets:
@@ -40,13 +40,14 @@ env:
   # On-prem SQL Server. This is not the PostgreSQL host.
   DB_IP: "192.168.1.55"
   isliveDb: "true"
+  # PostgreSQL. Same keys as appsettings "Credntials". ASP.NET maps Credntials__Host to Credntials:Host.
   # Public IP 34.131.181.133 times out from GKE. pdlerp_prod is on Cloud SQL instance "nbfc"; use its private IP.
-  # Host, port, and database come from Credntials. The login comes from Postgres:Username and Postgres:Password.
-  Credntials__HostIp: "10.247.161.3"
+  Credntials__Host: "10.247.161.3"
   Credntials__Port: "5432"
-  Credntials__dbName: "pdlerp_prod"
-  Postgres__Username: "paisalo_developer"
-  Postgres__Password: "PaisaloDeveloper2026!"
+  Credntials__Database: "pdlerp_prod"
+  Credntials__NcpdlDatabase: "ncpdl_prod"
+  Credntials__Username: "paisalo_developer"
+  Credntials__Password: "PaisaloDeveloper2026!"
   # Production SFTP. This API prefers SftpPort; port is only a fallback.
   SftpHost: "124.123.16.234"
   SftpUsername: "Sftp"

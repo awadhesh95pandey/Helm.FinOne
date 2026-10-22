@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/paisalo-digital-limited/pdl-mobilecolending-api
   pullPolicy: IfNotPresent
-  digest: "sha256:9e9774592ff01e420d829577733b4aef68bcfb9b3be6b128af9458bae6070330"
+  digest: "sha256:3c449ce499193c1da07e021d2622b7dab4e8df9e1183043c84131a4dfbb71fbb"
   tag: ""
 
 imagePullSecrets:
@@ -41,6 +41,7 @@ env:
   # On-prem SQL Server. This is not the PostgreSQL host.
   DB_IP: "192.168.1.55"
   isliveDb: "true"
+  isCrifCheckLive: "true"
   # Public IP 34.131.181.133 times out from GKE. pdlerp_prod is on Cloud SQL instance "nbfc"; use its private IP.
   Credntials__HostIp: "10.247.161.3"
   Credntials__Port: "5432"

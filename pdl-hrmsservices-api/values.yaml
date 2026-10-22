@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/paisalo-digital-limited/pdl-hrmsservices-api
   pullPolicy: Always
-  digest: "sha256:846ebcd0dac8fe9c3252ccb7b1ac29d9c333e835a579c68b2801c445eff8e4d1"
+  digest: "sha256:2e51884bccf9988405b405aafdf10e893f049280e87fa58b26646fee52a1e20e"
   tag: ""
 
 imagePullSecrets:
@@ -39,16 +39,29 @@ env:
   DB_TimeZone: "Asia/Kolkata"
   # Override on-prem IP baked into appsettings.json — must be reachable from GKE (via VPN/Interconnect)
   DB_IP: "192.168.1.55"
-  isliveDb: "true"
   PodUrl: ""
   # Public IP 34.131.181.133 times out from GKE. pdlerp_prod is on Cloud SQL instance "nbfc"; use its private IP.
   Credntials__HostIp: "10.247.161.3"
   Credntials__Port: "5432"
   Credntials__dbName: "pdlerp_prod"
-  Credntials__username: "paisalo_developer"
-  Credntials__password: "PaisaloDeveloper2026!"
+  Credntials__username: "paisalo_production"
+  Credntials__password: "PaisaloProduction2026#!"
+
+  #SMTP Config
+  mailconfiguration__userid: "paisalo.icewarpcloud.in"
+  mailconfiguration__port: "465"
+  mailconfiguration__from: "noreply1@paisalo.in"
+  mailconfiguration__password: "Norep@34$w&"
+
+  # Live switches. appsettings.json stays false; these env values override it on prod.
+  # isliveDb selects SftpCredentials:Live, Urls:Live, and the prod database path.
+  isliveDb: "true"
+  isLive: "true"
+  # UrlSettings:IsLiveURL selects LiveBaseUrl and Urls:Live for mailed links.
+  UrlSettings__IsLiveURL: "true"
+  # isCrifCheckLive selects crifLiveCred.
+  isCrifCheckLive: "true"
   # Flat SFTP keys are copied onto SftpCredentials:Live and :Uat at startup.
-  # isliveDb true selects the Live section.
   SftpHost: "124.123.16.234"
   SftpUsername: "Sftp"
   SftpPassword: "Sft@43^fw"
@@ -65,16 +78,6 @@ env:
   PdfApiKey: "pdl-internal-pdf-key"
 
 extraEnv: []
-
-# UAT shared SFTP objects live in erp-services and are not required in prod-erp-services.
-# Explicit env above supplies the production SFTP settings.
-envFrom:
-  - configMapRef:
-      name: shared-sftp-config
-      optional: true
-  - secretRef:
-      name: shared-sftp-credentials
-      optional: true
 
 dataProtection:
   enabled: true
