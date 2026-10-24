@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/paisalo-digital-limited/pdl-collection-api
   pullPolicy: IfNotPresent
-  digest: "sha256:1c506f6dcf2cc31ee21b68977b558f4732a8dbdbd839ed9ac604c7e14502e56e"
+  digest: "sha256:35e143dfd6b922a5c8cfa2a4229fa09f73a8434bc6942eefab3953b8170f2cb7"
   tag: ""
 
 imagePullSecrets:
@@ -44,8 +44,8 @@ env:
   Credntials__HostIp: "10.247.161.3"
   Credntials__Port: "5432"
   Credntials__dbName: "pdlerp_prod"
-  Credntials__username: "paisalo_developer"
-  Credntials__password: "PaisaloDeveloper2026!"
+  Credntials__username: "paisalo_production"
+  Credntials__password: "PaisaloProduction2026#!"
   # SFTP uses SftpCredentials:IsLive, not isliveDb.
   SftpCredentials__IsLive: "true"
   SftpCredentials__Live__Host: "124.123.16.234"

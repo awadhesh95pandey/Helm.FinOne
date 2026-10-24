@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/paisalo-digital-limited/pdl-ficaseservice-api
   pullPolicy: IfNotPresent
-  digest: "sha256:6bfed8d2aa5fcd54ed1c24c19ee6581d0a75bcf8a733e9aaad44d0b7f0e501f3"
+  digest: "sha256:74bef0f4c7660fbc0a48b5e9e4e61863cddcc24a15424be85033568d5619a59e"
   tag: ""
 
 imagePullSecrets:
@@ -40,6 +40,7 @@ env:
   # On-prem SQL Server. This is not the Postgres host.
   DB_IP: "192.168.1.55"
   isliveDb: "true"
+  isCrifCheckLive: "true"
   PodUrl: ""
   # Public IP 34.131.181.133 times out from GKE. pdlerp_prod is on Cloud SQL instance "nbfc"; use its private IP.
   # This API reads the PostgreSQL login from DB_User and DB_Password, not Credntials:username.

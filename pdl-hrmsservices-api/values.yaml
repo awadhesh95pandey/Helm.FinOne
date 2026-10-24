@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/paisalo-digital-limited/pdl-hrmsservices-api
   pullPolicy: Always
-  digest: "sha256:2e51884bccf9988405b405aafdf10e893f049280e87fa58b26646fee52a1e20e"
+  digest: "sha256:8e53a13e06f4f8b923297bb94c0eb0df93efbf8714b6a174c41cbdb03a70593c"
   tag: ""
 
 imagePullSecrets:
