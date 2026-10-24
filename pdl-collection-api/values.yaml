@@ -57,6 +57,8 @@ env:
   Swagger__Enabled: "true"
   # Prefix used by Swagger "Try it out" so calls hit Kong route /pdlcollection/...
   Swagger__ServerPrefix: "/pdlcollection"
+  NewBaseUrl: "https://predemoapi.paisalo.in:2383/"
+  ImgBaseUrl: "https://erp.paisalo.in:981/"
 
 extraEnv: []
 
