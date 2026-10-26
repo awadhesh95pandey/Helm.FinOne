@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/paisalo-digital-limited/react-erp-ui-2025
   pullPolicy: Always
-  digest: "sha256:66d8a4e8b9f77589a23f12e78a267998e9b5ca471e89a46b93e4459c76ec231e"
+  digest: "sha256:75a2b775d88c2ab145e36f696a18c1b3d2bd240c853271551e369661f31b4fdd"
   tag: ""
 
 imagePullSecrets:
