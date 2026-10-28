@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/paisalo-digital-limited/pdl-mobilecolending-api
   pullPolicy: IfNotPresent
-  digest: "sha256:ebb14f718c4205fdaf5b02b34815a4a8bd5e26b42e0a4fac42f069dd07c05809"
+  digest: "sha256:c6108f7aa7780741b645c1e1aa5c032eff72b992ac03f32020572f0dcf02cfd3"
   tag: ""
 
 imagePullSecrets:
@@ -55,6 +55,7 @@ env:
   SftpPort: "1024"
   port: "1024"
   NetworkPath: "\\\\124.123.16.234\\Data"
+  NewBaseUrl: "https://predemoapi.paisalo.in:2383/"
   # Enable Swagger UI behind Kong (https://api.paisalo.net/mobilecolending/swagger/index.html)
   Swagger__Enabled: "true"
   # Prefix used by Swagger "Try it out" so calls hit Kong route /mobilecolending/...

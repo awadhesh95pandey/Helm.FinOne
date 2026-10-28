@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/paisalo-digital-limited/pdl-authentication-api
   pullPolicy: IfNotPresent
-  digest: "sha256:be8d23d6e5916f0678a56126e5ed38955121b8662e7070201c5201bef9094708"
+  digest: "sha256:dc7b867f572fde3013ef37d399e09fb14af9eeeb8bedcca6deb56af94662252c"
   tag: ""
 
 imagePullSecrets:
@@ -37,8 +37,6 @@ env:
   # Container clock and DateTime.Now use India Standard Time. JWT exp is still validated in UTC.
   TZ: "Asia/Kolkata"
   DB_TimeZone: "Asia/Kolkata"
-  # On-prem SQL Server. This is not the PostgreSQL host.
-  DB_IP: "192.168.1.55"
   isliveDb: "true"
   isLiveSession: "true"
   isCredlive: "true"
@@ -67,7 +65,8 @@ envFrom: []
 
 dataProtection:
   enabled: true
-  mountPath: /root/.aspnet/DataProtection-Keys
+  # Non-root container user is app ($APP_UID); keys must live under /home/app, not /root.
+  mountPath: /home/app/.aspnet/DataProtection-Keys
 
 ingress:
   enabled: false
@@ -89,29 +88,29 @@ httpRoute:
 resources:
   limits:
     cpu: 500m
-    memory: 512Mi
+    memory: 1Gi
   requests:
     cpu: 250m
-    memory: 256Mi
+    memory: 512Mi
 
-# Liveness and startup only prove the process is listening.
-# Readiness opens PostgreSQL and runs SELECT 1. Keep this timeout above the 8s connection timeout.
+# Liveness/startup: process only (/health/live).
 startupProbe:
   httpGet:
     path: /health/live
     port: http
   initialDelaySeconds: 10
   periodSeconds: 10
+  timeoutSeconds: 5
   failureThreshold: 30
 
 livenessProbe:
   httpGet:
     path: /health/live
     port: http
-  initialDelaySeconds: 30
-  periodSeconds: 15
+  initialDelaySeconds: 60
+  periodSeconds: 20
   timeoutSeconds: 5
-  failureThreshold: 3
+  failureThreshold: 6
 
 readinessProbe:
   httpGet:
@@ -123,7 +122,7 @@ readinessProbe:
   failureThreshold: 3
 
 autoscaling:
-  enabled: false
+  enabled: true
   minReplicas: 1
   maxReplicas: 5
   targetCPUUtilizationPercentage: 80

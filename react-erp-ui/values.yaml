@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/paisalo-digital-limited/react-erp-ui-2025
   pullPolicy: Always
-  digest: "sha256:66d8a4e8b9f77589a23f12e78a267998e9b5ca471e89a46b93e4459c76ec231e"
+  digest: "sha256:26b8447f813169c0e339768fefe0eb1c6b376d3ab548012d82ff511148892a3b"
   tag: ""
 
 imagePullSecrets:
@@ -65,11 +65,11 @@ httpRoute:
 
 resources:
   limits:
-    cpu: 250m
-    memory: 512Mi
+    cpu: 1000m
+    memory: 1024Mi
   requests:
-    cpu: 100m
-    memory: 256Mi
+    cpu: 500m
+    memory: 512Mi
 
 startupProbe:
   httpGet:

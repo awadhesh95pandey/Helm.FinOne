@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/paisalo-digital-limited/pdl-rcpostingfirst-api
   pullPolicy: IfNotPresent
-  digest: "sha256:86d80db03e8c81ccf8416e206910387f12355a71d32372ada3449691b91c598a"
+  digest: "sha256:da5df786a8e384b0b9fe4f120332524ae72630cadfee0fe9d00ded1f66b463f7"
   tag: ""
 
 imagePullSecrets:
@@ -37,7 +37,22 @@ env:
   ASPNETCORE_URLS: "http://+:8080"
   # Override on-prem IP baked into appsettings.json — must be reachable from GKE (via VPN/Interconnect)
   DB_IP: "192.168.1.55"
-  isliveDb: "false"
+  isliveDb: "true"
+
+  # SFTP Configuration
+  SftpUsername: "Sftp"
+  SftpPassword: "Sft@43^fw"
+  SftpHost: "124.123.16.234"
+  port: 1024
+  BasePath: "https://predemoapi.paisalo.in:2383"
+
+  #DB Configuration
+  Postgres__Host: "34.131.181.133"
+  Postgres__Port: 5432
+  Postgres__Database: "pdlerp_prod"
+  Postgres__Username: "paisalo_developer"
+  Postgres__Password: "PaisaloDeveloper2026!"
+
   # GitHub placeholder used by other_pod health check — override with a real peer URL when available
   PodUrl: "https://github.com/Paisalo-Digital-Limited"
   # Enable Swagger UI behind Kong (https://api.paisalo.net/rcpostingfirst/swagger)

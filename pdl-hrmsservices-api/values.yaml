@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/paisalo-digital-limited/pdl-hrmsservices-api
   pullPolicy: Always
-  digest: "sha256:8e53a13e06f4f8b923297bb94c0eb0df93efbf8714b6a174c41cbdb03a70593c"
+  digest: "sha256:a181142fad0dd349940403c7717224901e0dc77a2c2bae0647df0217d06ff34e"
   tag: ""
 
 imagePullSecrets:
@@ -102,11 +102,11 @@ httpRoute:
 
 resources:
   limits:
+    cpu: 1000m
+    memory: 1024Mi
+  requests:
     cpu: 500m
     memory: 512Mi
-  requests:
-    cpu: 250m
-    memory: 256Mi
 
 # Liveness and startup only prove the process is listening.
 # Readiness opens PostgreSQL and runs SELECT 1. Keep this timeout above the 8s connection timeout.
