@@ -1,0 +1,6 @@
+apiVersion: v2
+name: pdl-rcbulkposting-api
+description: Helm chart for PDL Bulk RC Posting API on GKE
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

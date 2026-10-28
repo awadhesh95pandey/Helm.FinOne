@@ -37,8 +37,6 @@ env:
   # Container clock and DateTime.Now use India Standard Time. JWT exp is still validated in UTC.
   TZ: "Asia/Kolkata"
   DB_TimeZone: "Asia/Kolkata"
-  # On-prem SQL Server. This is not the PostgreSQL host.
-  DB_IP: "192.168.1.55"
   isliveDb: "true"
   # Public IP 34.131.181.133 times out from GKE. pdlerp_prod is on Cloud SQL instance "nbfc"; use its private IP.
   Credntials__HostIp: "10.247.161.3"
@@ -90,10 +88,10 @@ httpRoute:
 resources:
   limits:
     cpu: 500m
-    memory: 512Mi
+    memory: 1Gi
   requests:
     cpu: 250m
-    memory: 256Mi
+    memory: 512Mi
 
 # Liveness and startup only prove the process is listening.
 # Readiness opens PostgreSQL and runs SELECT 1. Keep this timeout above the 8s connection timeout.
@@ -124,7 +122,7 @@ readinessProbe:
   failureThreshold: 3
 
 autoscaling:
-  enabled: false
+  enabled: true
   minReplicas: 1
   maxReplicas: 5
   targetCPUUtilizationPercentage: 80

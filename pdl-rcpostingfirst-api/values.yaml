@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/paisalo-digital-limited/pdl-rcpostingfirst-api
   pullPolicy: IfNotPresent
-  digest: "sha256:da5df786a8e384b0b9fe4f120332524ae72630cadfee0fe9d00ded1f66b463f7"
+  digest: "sha256:4fcbe844daa9d400edcd890d776ecf87bc7458cf7b42c5213ce751a5711669e3"
   tag: ""
 
 imagePullSecrets:
@@ -35,8 +35,7 @@ containerPort: 8080
 env:
   ASPNETCORE_ENVIRONMENT: Production
   ASPNETCORE_URLS: "http://+:8080"
-  # Override on-prem IP baked into appsettings.json — must be reachable from GKE (via VPN/Interconnect)
-  DB_IP: "192.168.1.55"
+  
   isliveDb: "true"
 
   # SFTP Configuration
@@ -46,18 +45,18 @@ env:
   port: 1024
   BasePath: "https://predemoapi.paisalo.in:2383"
 
-  #DB Configuration
-  Postgres__Host: "34.131.181.133"
-  Postgres__Port: 5432
-  Postgres__Database: "pdlerp_prod"
-  Postgres__Username: "paisalo_developer"
-  Postgres__Password: "PaisaloDeveloper2026!"
+  # Public IP 34.131.181.133 times out from GKE. The API reads Credntials__*, not Postgres__*.
+  DB_TimeZone: "Asia/Kolkata"
+  Credntials__HostIp: "10.247.161.3"
+  Credntials__Port: "5432"
+  Credntials__dbName: "pdlerp_prod"
+  Credntials__username: "paisalo_production"
+  Credntials__password: "PaisaloProduction2026#!"
 
   # GitHub placeholder used by other_pod health check — override with a real peer URL when available
   PodUrl: "https://github.com/Paisalo-Digital-Limited"
   # Enable Swagger UI behind Kong (https://api.paisalo.net/rcpostingfirst/swagger)
   Swagger__Enabled: "true"
-  # Prefix used by Swagger "Try it out" so calls hit Kong route /rcpostingfirst/...
   Swagger__ServerPrefix: "/rcpostingfirst"
 
 extraEnv: []
@@ -102,6 +101,7 @@ startupProbe:
     port: http
   initialDelaySeconds: 10
   periodSeconds: 10
+  timeoutSeconds: 10
   failureThreshold: 30
 
 livenessProbe:
@@ -110,7 +110,7 @@ livenessProbe:
     port: http
   initialDelaySeconds: 30
   periodSeconds: 15
-  timeoutSeconds: 5
+  timeoutSeconds: 10
   failureThreshold: 3
 
 readinessProbe:
@@ -123,7 +123,7 @@ readinessProbe:
   failureThreshold: 3
 
 autoscaling:
-  enabled: false
+  enabled: true
   minReplicas: 1
   maxReplicas: 5
   targetCPUUtilizationPercentage: 80

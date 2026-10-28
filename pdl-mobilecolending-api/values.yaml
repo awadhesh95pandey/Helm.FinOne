@@ -35,19 +35,20 @@ containerPort: 8080
 env:
   ASPNETCORE_ENVIRONMENT: Production
   ASPNETCORE_URLS: "http://+:8080"
+
   # Container clock and DateTime.Now use India Standard Time. JWT exp is still validated in UTC.
   TZ: "Asia/Kolkata"
   DB_TimeZone: "Asia/Kolkata"
-  # On-prem SQL Server. This is not the PostgreSQL host.
-  DB_IP: "192.168.1.55"
   isliveDb: "true"
   isCrifCheckLive: "true"
+
   # Public IP 34.131.181.133 times out from GKE. pdlerp_prod is on Cloud SQL instance "nbfc"; use its private IP.
   Credntials__HostIp: "10.247.161.3"
   Credntials__Port: "5432"
   Credntials__dbName: "pdlerp_prod"
-  Credntials__username: "paisalo_developer"
-  Credntials__password: "PaisaloDeveloper2026!"
+  Credntials__username: "paisalo_production"
+  Credntials__password: "PaisaloProduction2026#!"
+
   # Production SFTP. This API prefers SftpPort, and also reads port.
   SftpHost: "124.123.16.234"
   SftpUsername: "Sftp"
@@ -56,9 +57,9 @@ env:
   port: "1024"
   NetworkPath: "\\\\124.123.16.234\\Data"
   NewBaseUrl: "https://predemoapi.paisalo.in:2383/"
+  
   # Enable Swagger UI behind Kong (https://api.paisalo.net/mobilecolending/swagger/index.html)
   Swagger__Enabled: "true"
-  # Prefix used by Swagger "Try it out" so calls hit Kong route /mobilecolending/...
   Swagger__ServerPrefix: "/mobilecolending"
 
 extraEnv: []
@@ -90,11 +91,11 @@ httpRoute:
 
 resources:
   limits:
-    cpu: 500m
-    memory: 512Mi
+    cpu: 1000m
+    memory: 1Gi
   requests:
     cpu: 250m
-    memory: 256Mi
+    memory: 512Mi
 
 # Liveness and startup only prove the process is listening.
 # Readiness opens PostgreSQL and runs SELECT 1. Keep this timeout above the 8s connection timeout.
@@ -125,7 +126,7 @@ readinessProbe:
   failureThreshold: 3
 
 autoscaling:
-  enabled: false
+  enabled: true
   minReplicas: 1
   maxReplicas: 5
   targetCPUUtilizationPercentage: 80

@@ -34,19 +34,19 @@ containerPort: 8080
 env:
   ASPNETCORE_ENVIRONMENT: Production
   ASPNETCORE_URLS: "http://+:8080"
+
   # Container clock and DateTime.Now use India Standard Time. JWT exp is still validated in UTC.
   TZ: "Asia/Kolkata"
   DB_TimeZone: "Asia/Kolkata"
-  # On-prem SQL Server. This is not the PostgreSQL host.
-  DB_IP: "192.168.1.55"
   isliveDb: "true"
+
   # Public IP 34.131.181.133 times out from GKE. pdlerp_prod is on Cloud SQL instance "nbfc"; use its private IP.
-  # dbName is plain text. Username and Password stay encrypted in appsettings and are decrypted at startup.
   Credntials__HostIp: "10.247.161.3"
   Credntials__Port: "5432"
   Credntials__Database: "Ofi/YbuNugeNnQca5s8iQqdEzQRWDRkOlYJd8bGRW14="
-  Credntials__Username: "R5qu4A3ASEU+fuyjw4dO439gdw70gLqvO4YHQUQY83Zh4+SIokum2vzgA6/9u5aG"
-  Credntials__Password: "iFLSV5csNQX+c280yiFRFkh+u/Hkh4PLk/xMQeRhw/u+SJ9GYF3rmukbfyRIDp0r"
+  Credntials__username: "R5qu4A3ASEU+fuyjw4dO46gT7L3E2QLftcOJD0WnyM73bmJ3Mf3Mp0+5PfYvUMSC"
+  Credntials__password: "1nvFsoRS9gFwc8xAuRytZOTx6Emf0LmIdvabylb1zzIkKxoC7QczkXnGdfShCXSV"
+
   # Production SFTP. This API prefers SftpPort; port is only a fallback.
   SftpHost: "124.123.16.234"
   SftpUsername: "Sftp"
@@ -56,9 +56,9 @@ env:
   NetworkPath: "\\\\124.123.16.234\\Data"
   NewBaseUrl: "https://predemoapi.paisalo.in:2383/Data"
   NewBaseUrl2: "https://predemoapi.paisalo.in:2383"
+
   # Enable Swagger UI behind Kong (https://api.paisalo.net/PDLManagement/swagger/index.html)
   Swagger__Enabled: "true"
-  # Prefix used by Swagger "Try it out" so calls hit Kong route /PDLManagement/...
   Swagger__ServerPrefix: "/PDLManagement"
 
 extraEnv: []
@@ -91,7 +91,7 @@ httpRoute:
 resources:
   limits:
     cpu: 1000m
-    memory: 1024Mi
+    memory: 1Gi
   requests:
     cpu: 500m
     memory: 512Mi
@@ -125,7 +125,7 @@ readinessProbe:
   failureThreshold: 3
 
 autoscaling:
-  enabled: false
+  enabled: true
   minReplicas: 1
   maxReplicas: 5
   targetCPUUtilizationPercentage: 80

@@ -44,8 +44,8 @@ env:
   Credntials__HostIp: "10.247.161.3"
   Credntials__Port: "5432"
   Credntials__dbName: "pdlerp_prod"
-  Credntials__username: "paisalo_developer"
-  Credntials__password: "PaisaloDeveloper2026!"
+  Credntials__username: "paisalo_production"
+  Credntials__password: "PaisaloProduction2026#!"
   # Production SFTP. The API reads the port from configuration key "port".
   SftpHost: "124.123.16.234"
   SftpUsername: "Sftp"
