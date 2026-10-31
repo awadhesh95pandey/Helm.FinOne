@@ -1,5 +1,9 @@
 PDL Bulk RC Posting API deployed.
 
+Kong public URL:
+  https://finone.paisalo.in/rcbulkposting
+  https://finone.paisalo.in/rcbulkposting/swagger/index.html
+
 In-cluster status:
   http://{{ include "pdl-rcbulkposting-api.fullname" . }}:{{ .Values.service.port }}/api/RCPost/status
 

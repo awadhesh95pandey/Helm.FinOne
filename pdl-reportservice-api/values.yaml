@@ -46,8 +46,8 @@ env:
   Credntials__Port: "5432"
   Credntials__Database: "pdlerp_prod"
   Credntials__NcpdlDatabase: "ncpdl_prod"
-  Credntials__Username: "paisalo_developer"
-  Credntials__Password: "PaisaloDeveloper2026!"
+  Credntials__Username: "paisalo_production"
+  Credntials__Password: "PaisaloProduction2026#!"
   # Production SFTP. This API prefers SftpPort; port is only a fallback.
   SftpHost: "124.123.16.234"
   SftpUsername: "Sftp"

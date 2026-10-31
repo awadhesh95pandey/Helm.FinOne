@@ -3,9 +3,8 @@ replicaCount: 1
 image:
   repository: ghcr.io/paisalo-digital-limited/pdl-rcbulkposting-api
   pullPolicy: IfNotPresent
-  # Pin sha256 after the image is published. Empty digest falls back to tag.
-  digest: ""
-  tag: "latest"
+  digest: "sha256:37aa048fa15822c513d873249cea7ee8c81950073df8208de24ec78875baa556"
+  tag: ""
 
 imagePullSecrets:
   - name: nbfc-ghcr-secret
@@ -36,13 +35,17 @@ containerPort: 8080
 env:
   ASPNETCORE_ENVIRONMENT: Production
   ASPNETCORE_URLS: "http://+:8080"
+
   # Container clock and DateTime.Now use India Standard Time. The hosted job logs and delays in local time.
   TZ: "Asia/Kolkata"
 
-  # This API reads ConnectionStrings:DefaultConnection and smsUrl.
-  # Public IP 34.131.181.133 times out from GKE. pdlerp_prod is on Cloud SQL instance "nbfc"; use its private IP.
   ConnectionStrings__DefaultConnection: "Host=10.247.161.3;Port=5432;Database=pdlerp_prod;Username=paisalo_production;Password=PaisaloProduction2026#!;SSL Mode=Require;Timezone=Asia/Kolkata"
-  smsUrl: "https://predemoapi.paisalo.in:2383/Authentication/api/SMS/SendSMS"
+  smsUrl: "https://finone.paisalo.in/authentication/api/SMS/SendSMS"
+  
+  # Authentication__ApiKey: "PAISALODIGITAL_API_2026_CLOUD_DEPLOYEMENT#!"
+  # Swagger stays off in Production unless this is set. Kong strips /rcbulkposting before the pod.
+  Swagger__Enabled: "true"
+  Swagger__ServerPrefix: "/rcbulkposting"
 
 extraEnv: []
 
@@ -110,9 +113,9 @@ readinessProbe:
 
 # Keep a single replica. Each pod runs the 2-hour RC posting loop, so extra replicas would post the same batch.
 autoscaling:
-  enabled: false
+  enabled: true
   minReplicas: 1
-  maxReplicas: 1
+  maxReplicas: 3
   targetCPUUtilizationPercentage: 80
 
 nodeSelector: {}
