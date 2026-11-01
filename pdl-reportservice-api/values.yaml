@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/paisalo-digital-limited/pdl-reportservice-api
   pullPolicy: IfNotPresent
-  digest: "sha256:edb6473d52e08faa7b35eb2860cdc3fa70265d269a29c90ecc47f4211acc1f55"
+  digest: "sha256:5360a14da831fc3d8cac3f984baf2227b2aaa478b49aca867f0ac83bd8722ac5"
   tag: ""
 
 imagePullSecrets:
