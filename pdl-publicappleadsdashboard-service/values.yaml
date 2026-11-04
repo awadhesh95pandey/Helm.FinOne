@@ -1,0 +1,121 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/paisalo-digital-limited/pdl-publicappleadsdashboard-service
+  pullPolicy: IfNotPresent
+  digest: "sha256:dd47b603165113102024ca67efe2883a06aff5420c2011248d4c88668cbcc3db"
+  tag: ""
+
+imagePullSecrets:
+  - name: nbfc-ghcr-secret
+
+nameOverride: ""
+# Must match Kong upstream: pdl-publicappleadsdashboard-service.prod-erp-services.svc.cluster.local
+fullnameOverride: "pdl-publicappleadsdashboard-service"
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 8080
+
+containerPort: 8080
+
+env:
+  ASPNETCORE_ENVIRONMENT: Production
+  ASPNETCORE_URLS: "http://+:8080"
+  # Container clock and DateTime.Now use India Standard Time.
+  TZ: "Asia/Kolkata"
+  DB_TimeZone: "Asia/Kolkata"
+  # On-prem SQL Server (PDLERP) used by NmDesk.
+  DB_IP: "192.168.1.55"
+  isliveDb: "true"
+  # Prefer moving this into a Secret (see envFrom) for non-dev clusters.
+  ConnectionStrings__PaisaloNewPDLERP: "Data Source=192.168.1.55;Initial Catalog=PDLERP;User Id=BeetaUser;password=BeetaUser@123;Trusted_Connection=False;MultipleActiveResultSets=True;Encrypt=false;Connect Timeout=15"
+  Cors__Origins__0: "https://finone.paisalo.in"
+  Cors__Origins__1: "https://erp.paisalo.net"
+  # Swagger behind Kong: https://finone.paisalo.in/leadsdashboard/swagger
+  Swagger__Enabled: "true"
+  Swagger__ServerPrefix: "/leadsdashboard"
+
+extraEnv: []
+
+envFrom: []
+  # - secretRef:
+  #     name: pdl-publicappleadsdashboard-service-secrets
+
+dataProtection:
+  enabled: true
+  mountPath: /root/.aspnet/DataProtection-Keys
+
+ingress:
+  enabled: false
+  className: "gce"
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    # networking.gke.io/managed-certificates: "pdl-publicappleadsdashboard-service-cert"
+    # kubernetes.io/ingress.global-static-ip-name: "pdl-publicappleadsdashboard-service-ip"
+  hosts:
+    - host: publicappleadsdashboard-api.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+httpRoute:
+  enabled: false
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 1Gi
+  requests:
+    cpu: 250m
+    memory: 512Mi
+
+# App has no /health endpoints yet — TCP probes confirm the process is listening.
+startupProbe:
+  tcpSocket:
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  failureThreshold: 30
+
+livenessProbe:
+  tcpSocket:
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 15
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  tcpSocket:
+    port: http
+  initialDelaySeconds: 15
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

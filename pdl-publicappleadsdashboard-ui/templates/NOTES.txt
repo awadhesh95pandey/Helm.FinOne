@@ -1,0 +1,8 @@
+PDL Public APP Leads Dashboard UI deployed.
+
+Public URL (via Kong):
+  https://finone.paisalo.in/leadsdashboard
+  https://finone.paisalo.in/leadsdashboard/swagger
+
+In-cluster:
+  http://{{ include "pdl-publicappleadsdashboard-ui.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.port }}/leadsdashboard/

@@ -1,0 +1,133 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/paisalo-digital-limited/headlendingvisitreportapi
+  pullPolicy: IfNotPresent
+  digest: "sha256:d9bbc1f3d30d2cfd02055f75a3b42a609d94498d73c0f5030d3444a30c0749b7"
+  tag: ""
+
+imagePullSecrets:
+  - name: nbfc-ghcr-secret
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 8080
+
+containerPort: 8080
+
+env:
+  ASPNETCORE_ENVIRONMENT: Production
+  ASPNETCORE_URLS: "http://+:8080"
+
+  # Container clock and DateTime.Now use India Standard Time.
+  TZ: "Asia/Kolkata"
+  DB_TimeZone: "Asia/Kolkata"
+
+  # Public IP 34.131.181.133 times out from GKE. Use Cloud SQL private IP.
+  Credntials__HostIp: "10.247.161.3"
+  Credntials__Port: "5432"
+
+  Credntials__Database: "Ofi/YbuNugeNnQca5s8iQqdEzQRWDRkOlYJd8bGRW14="
+  Credntials__username: "R5qu4A3ASEU+fuyjw4dO46gT7L3E2QLftcOJD0WnyM73bmJ3Mf3Mp0+5PfYvUMSC"
+  Credntials__password: "1nvFsoRS9gFwc8xAuRytZOTx6Emf0LmIdvabylb1zzIkKxoC7QczkXnGdfShCXSV"
+
+  encryptSalts__userSalt: "DBNA2SPBNI99552"
+  encryptSalts__dbSalt: "MAKV2SDBNI92024"
+
+  FileStorage__RootPath: "App_Data/Uploads"
+  FileStorage__MaxFileSizeBytes: "26214400"
+
+  # Enable Swagger UI behind Kong (https://finone.paisalo.in/headlendingvisitreport/swagger)
+  Swagger__Enabled: "true"
+  Swagger__ServerPrefix: "/headlendingvisitreport"
+
+extraEnv: []
+
+envFrom: []
+  # - secretRef:
+  #     name: pdl-headlendingvisitreportapi-api-secrets
+
+dataProtection:
+  enabled: true
+  mountPath: /root/.aspnet/DataProtection-Keys
+
+uploads:
+  enabled: true
+  mountPath: /app/App_Data/Uploads
+
+ingress:
+  enabled: false
+  className: "gce"
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    # networking.gke.io/managed-certificates: "pdl-headlendingvisitreportapi-api-cert"
+    # kubernetes.io/ingress.global-static-ip-name: "pdl-headlendingvisitreportapi-api-ip"
+  hosts:
+    - host: headlendingvisitreport-api.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+httpRoute:
+  enabled: false
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 1Gi
+  requests:
+    cpu: 250m
+    memory: 512Mi
+
+# This API has no /health endpoints yet — use TCP probes on the listen port.
+startupProbe:
+  tcpSocket:
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  failureThreshold: 30
+
+livenessProbe:
+  tcpSocket:
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 15
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  tcpSocket:
+    port: http
+  initialDelaySeconds: 15
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
