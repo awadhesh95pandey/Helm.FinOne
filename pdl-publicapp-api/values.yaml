@@ -1,0 +1,130 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/paisalo-digital-limited/pdl-publicapp-api
+  pullPolicy: IfNotPresent
+  digest: "sha256:ea893d89c479878ab40fa1281275de98743bf012cd4b1e8a8f820e89a5b3e5b1"
+  tag: ""
+
+imagePullSecrets:
+  - name: nbfc-ghcr-secret
+
+nameOverride: ""
+# Must match Kong upstream: pdl-publicapp-api.prod-erp-services.svc.cluster.local
+fullnameOverride: "pdl-publicapp-api"
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 8080
+
+containerPort: 8080
+
+env:
+  ASPNETCORE_ENVIRONMENT: Production
+  ASPNETCORE_URLS: "http://+:8080"
+
+  # Container clock and DateTime.Now use India Standard Time.
+  TZ: "Asia/Kolkata"
+  DB_TimeZone: "Asia/Kolkata"
+  isliveDb: "true"
+
+  # Public IP 34.131.181.133 times out from GKE. Both databases are on Cloud SQL instance "nbfc"; use its private IP.
+  # GetToken and the other public-app calls use PaisaloPublicApp. PDLERP calls use PaisaloNewPDLERP.
+  ConnectionStrings__PaisaloPublicApp: "Host=10.247.161.3;Port=5432;Database=pdlpublicapp_beta;Username=paisalo_developer;Password=PaisaloDeveloper2026!;Timeout=30;Command Timeout=120;Pooling=True;Timezone=Asia/Calcutta;Search Path=public"
+  ConnectionStrings__PaisaloNewPDLERP: "Host=10.247.161.3;Port=5432;Database=pdlerp_prod;Username=paisalo_production;Password=PaisaloProduction2026#!;Timeout=30;Command Timeout=120;Pooling=True;Timezone=Asia/Kolkata;Search Path=public"
+  ConnectionStrings__PaisaloConnection: "Data Source=192.168.10.3;Initial Catalog=SBIPDLCOL;User Id=sa;password=hariramteli;Trusted_Connection=False;MultipleActiveResultSets=True;Encrypt=false;Connect Timeout=0"
+
+  SftpHost: "124.123.16.234"
+  SftpUsername: "Sftp"
+  SftpPassword: "Sft@43^fw"
+  port: "1024"
+
+  filePath: "/app/data/"
+
+  # Swagger UI behind Kong: https://finone.paisalo.in/publicapp/swagger
+  Swagger__Enabled: "true"
+  Swagger__ServerPrefix: "/publicapp"
+
+extraEnv: []
+
+envFrom: []
+  # - secretRef:
+  #     name: pdl-publicapp-api-secrets
+
+dataProtection:
+  enabled: true
+  mountPath: /root/.aspnet/DataProtection-Keys
+
+ingress:
+  enabled: false
+  className: "gce"
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    # networking.gke.io/managed-certificates: "pdl-publicapp-api-cert"
+    # kubernetes.io/ingress.global-static-ip-name: "pdl-publicapp-api-ip"
+  hosts:
+    - host: publicapp-api.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+httpRoute:
+  enabled: false
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+# This API has no /health endpoints yet — use TCP probes on the listen port.
+startupProbe:
+  tcpSocket:
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  failureThreshold: 30
+
+livenessProbe:
+  tcpSocket:
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 15
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  tcpSocket:
+    port: http
+  initialDelaySeconds: 15
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/paisalo-digital-limited/pdl-ficaseservice-api
   pullPolicy: IfNotPresent
-  digest: "sha256:4da99a79761b24b7401a110707c36c8df4f6af727947218e207e22a5e058b69c"
+  digest: "sha256:d2bf797076bde044512bf575102fc47202d7aee8cd1e19fda33c179b9845abe4"
   tag: ""
 
 imagePullSecrets:

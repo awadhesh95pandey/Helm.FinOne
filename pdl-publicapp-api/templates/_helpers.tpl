@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "pdl-publicappleadsdashboard-service.name" -}}
+{{- define "pdl-publicapp-api.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "pdl-publicappleadsdashboard-service.fullname" -}}
+{{- define "pdl-publicapp-api.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "pdl-publicappleadsdashboard-service.chart" -}}
+{{- define "pdl-publicapp-api.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "pdl-publicappleadsdashboard-service.labels" -}}
-helm.sh/chart: {{ include "pdl-publicappleadsdashboard-service.chart" . }}
-{{ include "pdl-publicappleadsdashboard-service.selectorLabels" . }}
+{{- define "pdl-publicapp-api.labels" -}}
+helm.sh/chart: {{ include "pdl-publicapp-api.chart" . }}
+{{ include "pdl-publicapp-api.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,8 +45,8 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "pdl-publicappleadsdashboard-service.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "pdl-publicappleadsdashboard-service.name" . }}
+{{- define "pdl-publicapp-api.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "pdl-publicapp-api.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
@@ -54,7 +54,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 Build the container image reference.
 Prefer digest for immutable GKE deploys: repository@sha256:...
 */}}
-{{- define "pdl-publicappleadsdashboard-service.image" -}}
+{{- define "pdl-publicapp-api.image" -}}
 {{- if .Values.image.digest -}}
 {{- $digest := .Values.image.digest -}}
 {{- if not (hasPrefix "sha256:" $digest) -}}
@@ -69,9 +69,9 @@ Prefer digest for immutable GKE deploys: repository@sha256:...
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "pdl-publicappleadsdashboard-service.serviceAccountName" -}}
+{{- define "pdl-publicapp-api.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "pdl-publicappleadsdashboard-service.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "pdl-publicapp-api.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}

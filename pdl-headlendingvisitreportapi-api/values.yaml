@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/paisalo-digital-limited/headlendingvisitreportapi
   pullPolicy: IfNotPresent
-  digest: "sha256:d9bbc1f3d30d2cfd02055f75a3b42a609d94498d73c0f5030d3444a30c0749b7"
+  digest: "sha256:21a876604413b7dc02369c7a3a274777840482f675755dac3eb73e00935d0e1f"
   tag: ""
 
 imagePullSecrets:

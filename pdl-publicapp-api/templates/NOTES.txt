@@ -1,0 +1,19 @@
+PDL Public App API deployed.
+
+Service:
+  {{ include "pdl-publicapp-api.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.port }}
+
+{{- if .Values.ingress.enabled }}
+{{- range $host := .Values.ingress.hosts }}
+{{- range .paths }}
+Application URL:
+  http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}{{ .path }}
+{{- end }}
+{{- end }}
+{{- else if contains "LoadBalancer" .Values.service.type }}
+Get the external IP:
+  kubectl get svc --namespace {{ .Release.Namespace }} {{ include "pdl-publicapp-api.fullname" . }}
+{{- else }}
+Port-forward for local access:
+  kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ include "pdl-publicapp-api.fullname" . }} 8080:{{ .Values.service.port }}
+{{- end }}

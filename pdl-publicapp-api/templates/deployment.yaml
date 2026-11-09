@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "pdl-publicappleadsdashboard-ui.fullname" . }}
+  name: {{ include "pdl-publicapp-api.fullname" . }}
   labels:
-    {{- include "pdl-publicappleadsdashboard-ui.labels" . | nindent 4 }}
+    {{- include "pdl-publicapp-api.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "pdl-publicappleadsdashboard-ui.selectorLabels" . | nindent 6 }}
+      {{- include "pdl-publicapp-api.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,7 +18,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "pdl-publicappleadsdashboard-ui.labels" . | nindent 8 }}
+        {{- include "pdl-publicapp-api.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -27,7 +27,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "pdl-publicappleadsdashboard-ui.serviceAccountName" . }}
+      serviceAccountName: {{ include "pdl-publicapp-api.serviceAccountName" . }}
       {{- with .Values.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
@@ -38,7 +38,7 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          image: {{ include "pdl-publicappleadsdashboard-ui.image" . | quote }}
+          image: {{ include "pdl-publicapp-api.image" . | quote }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
@@ -52,6 +52,10 @@ spec:
             {{- with .Values.extraEnv }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+          {{- with .Values.envFrom }}
+          envFrom:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- with .Values.startupProbe }}
           startupProbe:
             {{- toYaml . | nindent 12 }}
@@ -68,6 +72,16 @@ spec:
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          {{- if .Values.dataProtection.enabled }}
+          volumeMounts:
+            - name: dataprotection-keys
+              mountPath: {{ .Values.dataProtection.mountPath }}
+          {{- end }}
+      {{- if .Values.dataProtection.enabled }}
+      volumes:
+        - name: dataprotection-keys
+          emptyDir: {}
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

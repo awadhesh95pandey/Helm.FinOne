@@ -1,6 +1,0 @@
-apiVersion: v2
-name: pdl-publicappleadsdashboard-service
-description: Helm chart for PDL Public APP Leads Dashboard API on GKE (Production)
-type: application
-version: 0.1.0
-appVersion: "1.0.0"

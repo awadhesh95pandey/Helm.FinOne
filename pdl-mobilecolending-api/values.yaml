@@ -56,7 +56,7 @@ env:
   SftpPort: "1024"
   port: "1024"
   NetworkPath: "\\\\124.123.16.234\\Data"
-  NewBaseUrl: "https://predemoapi.paisalo.in:2383/"
+  NewBaseUrl: "https://predemoapi.paisalo.in:2383/Data"
   
   # Enable Swagger UI behind Kong (https://api.paisalo.net/mobilecolending/swagger/index.html)
   Swagger__Enabled: "true"
